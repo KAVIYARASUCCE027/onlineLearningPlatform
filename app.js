@@ -267,6 +267,42 @@ app.get("/api/categories", async (req, res) => {
   }
 });
 
+
+
+app.post("/api/payment", async (req, res) => {
+  try {
+    const { email, cardDetails, courseName } = req.body; // Card details would be sent here
+
+    // Simulate a payment process (e.g., payment gateway integration)
+    const paymentSuccessful = true; // Simulate payment success
+
+    if (paymentSuccessful) {
+      // After payment is successful, enroll the user in the course
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check if the user is already enrolled in the course
+      if (user.enrolledCourses.includes(courseName)) {
+        return res.status(400).json({ message: "User already enrolled in this course" });
+      }
+
+      // Add the course to the user's enrolledCourses list
+      user.enrolledCourses.push(courseName);
+      await user.save();
+
+      res.status(200).json({ message: "Payment successful and user enrolled in the course!" });
+    } else {
+      res.status(400).json({ message: "Payment failed. Please try again." });
+    }
+  } catch (error) {
+    console.error("Error processing payment:", error);
+    res.status(500).json({ error: "Payment processing failed" });
+  }
+});
+
 // Start Server
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
