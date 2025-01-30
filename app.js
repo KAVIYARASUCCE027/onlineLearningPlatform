@@ -199,7 +199,8 @@ app.post("/api/login", async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ id: user.id }, "Secret_Key", { expiresIn: "1h" });
 
-    res.status(200).json({ message: "Login successful", token });
+   res.status(200).json({ message: "Login successful", token, user: { email: user.email, name: user.name } });
+
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "Login failed" });
